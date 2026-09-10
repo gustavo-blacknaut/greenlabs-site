@@ -4,7 +4,7 @@ O site é estático: `next build` cospe uma pasta de HTML, CSS e JS e nada
 mais. Não há Node rodando em produção, não há banco, não há processo para
 reiniciar. O nginx serve arquivos e acabou.
 
-O que **não** é estático é a sinalização — essa é o
+O que **não** é estático é a sinalização - essa é o
 [servidor Go](https://github.com/gustavo-blacknaut/greenlabs-server), um
 processo separado. O site nunca fala com um backend nosso; ele fala com o
 servidor de quem está hospedando a sala.
@@ -32,7 +32,7 @@ npm ci
 npm run build
 ```
 
-O build gera `out/` — cerca de 1,7 MB de HTML, CSS e JS.
+O build gera `out/` - cerca de 1,7 MB de HTML, CSS e JS.
 
 ```bash
 pm2 start "serve out -l 4068 --no-clipboard" --name greenlabs-site
@@ -42,7 +42,7 @@ pm2 startup    # rode a linha que ele imprimir, para subir sozinho no boot
 
 > **Por que `serve` e não `next start`.** Este site é export estático
 > (`output: 'export'` no next.config). O `next start` recusa rodar nesse
-> modo — ele existe para quem tem servidor Next de verdade. O `serve`
+> modo - ele existe para quem tem servidor Next de verdade. O `serve`
 > entrega a pasta pronta e, o que importa aqui, resolve `/call` para
 > `call.html` sozinho: sem isso o link de convite dá 404.
 
@@ -90,7 +90,7 @@ pm2 restart greenlabs-site
 ```
 
 > **Leia a seção 4 antes de divulgar o endereço.** Com o site em HTTPS, o
-> navegador bloqueia todo servidor de sinalização em `ws://` — e o erro que
+> navegador bloqueia todo servidor de sinalização em `ws://` - e o erro que
 > aparece não diz isso.
 
 ---
@@ -103,7 +103,7 @@ Na sua máquina, dentro do repositório:
 npm ci && npm run build
 ```
 
-Sai em `out/` — cerca de 1,7 MB no total.
+Sai em `out/` - cerca de 1,7 MB no total.
 
 ## 2. Mandar para a VPS
 
@@ -203,7 +203,7 @@ server {
 }
 ```
 
-E aí o endereço a divulgar é `sinal.seudominio.com` — sem porta, sem
+E aí o endereço a divulgar é `sinal.seudominio.com` - sem porta, sem
 esquema. O site resolve para `wss://` sozinho quando está em HTTPS.
 
 > **Só o WebSocket passa pelo nginx.** Vídeo e áudio são WebRTC: vão
@@ -226,6 +226,6 @@ Sem reload de nginx: são arquivos, e o `index.html` não tem cache longo.
 ## Alternativa sem VPS
 
 O site é estático, então GitHub Pages, Cloudflare Pages e Netlify servem
-ele de graça — aponte o build para `npm run build` e a pasta para `out/`.
+ele de graça - aponte o build para `npm run build` e a pasta para `out/`.
 A regra do `wss://` continua valendo: o servidor de sinalização precisa de
 TLS de qualquer jeito.

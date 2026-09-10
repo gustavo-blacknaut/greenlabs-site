@@ -1,5 +1,5 @@
 // Tudo que a pessoa configura fica no navegador dela. Não existe conta e não
-// existe backend nosso — o servidor de sinalização é o dela.
+// existe backend nosso - o servidor de sinalização é o dela.
 
 const CHAVES = {
   nome: 'greenlabs:nome',

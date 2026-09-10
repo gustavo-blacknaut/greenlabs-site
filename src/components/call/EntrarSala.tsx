@@ -45,7 +45,7 @@ export default function EntrarSala({
   // parte dos casos. Aqui não há alternativa: os valores vêm do localStorage e
   // da URL, que não existem quando o HTML estático é gerado. Calcular na
   // inicialização do useState renderizaria vazio no servidor e preenchido no
-  // cliente — erro de hidratação. Este é o caminho que o próprio React indica
+  // cliente - erro de hidratação. Este é o caminho que o próprio React indica
   // para semear estado a partir do navegador, e roda uma vez só.
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
@@ -73,7 +73,7 @@ export default function EntrarSala({
   const avisoMisto = normalizado ? checarMixedContent(normalizado) : null;
 
   // A oferta só aparece quando a tentativa falhou numa página segura contra um
-  // endereço wss:// — que é a assinatura de "o servidor não tem TLS". Mostrar
+  // endereço wss:// - que é a assinatura de "o servidor não tem TLS". Mostrar
   // antes de falhar seria empurrar um intermediário para quem não precisa dele.
   const pelaPonte = montarPelaPonte(servidor);
   const ofereceRota =
@@ -132,12 +132,12 @@ export default function EntrarSala({
               pronto, sem intermediário e sem abrir porta no roteador.
             </p>
             <p className="text-zinc-400 text-xs leading-relaxed mb-3">
-              <strong className="text-zinc-200">Ou passe pela ponte</strong> —
+              <strong className="text-zinc-200">Ou passe pela ponte</strong> -
               ela recebe <code className="px-1 py-0.5 rounded bg-white/10 text-zinc-200">wss://</code>{' '}
               e repassa para o seu servidor. Só a sinalização passa por lá; vídeo
               e áudio continuam indo direto entre vocês.{' '}
               <span className="text-amber-300/90">
-                Quem opera a ponte vê quem entrou em qual sala — não vê a imagem
+                Quem opera a ponte vê quem entrou em qual sala - não vê a imagem
                 nem o som.
               </span>
             </p>
@@ -272,7 +272,7 @@ export default function EntrarSala({
 
         {!temTela && (
           <p className="mt-5 text-xs text-zinc-600 leading-relaxed font-medium">
-            Seu navegador não permite transmitir a tela — no celular isso é
+            Seu navegador não permite transmitir a tela - no celular isso é
             limitação do sistema, não do site. Você ainda assiste e entra com
             câmera e microfone.
           </p>

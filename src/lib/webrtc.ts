@@ -27,7 +27,7 @@ export type Qualidade = {
 };
 
 export const QUALIDADES: Qualidade[] = [
-  { id: '480p30', label: '480p 30fps — leve', width: 854, height: 480, fps: 30, bitrate: 900_000 },
+  { id: '480p30', label: '480p 30fps - leve', width: 854, height: 480, fps: 30, bitrate: 900_000 },
   { id: '720p30', label: '720p 30fps', width: 1280, height: 720, fps: 30, bitrate: 2_200_000 },
   { id: '1080p30', label: '1080p 30fps', width: 1920, height: 1080, fps: 30, bitrate: 4_500_000 },
 ];
@@ -117,7 +117,7 @@ export function motivoDaFalha(urlTentada: string): string {
   if (paginaSegura && urlTentada.startsWith('wss://')) {
     return (
       'Não foi possível conectar. Como este site está em HTTPS, o navegador só ' +
-      'aceita servidor com TLS (wss://) — e a maioria sobe sem. Se o servidor é ' +
+      'aceita servidor com TLS (wss://) - e a maioria sobe sem. Se o servidor é ' +
       'seu, coloque-o atrás de um proxy com certificado; se não, peça o endereço ' +
       'wss:// a quem hospeda. O aplicativo de desktop não tem essa restrição.'
     );
@@ -175,7 +175,7 @@ export const podeCompartilharTela = (): boolean =>
  * GreenLabs usa WASAPI, e por isso que o próprio Discord precisa de um app
  * desktop para conseguir o mesmo.
  *
- * O que dá para escolher aqui é a *fonte* — e a primeira opção resolve o caso
+ * O que dá para escolher aqui é a *fonte* - e a primeira opção resolve o caso
  * comum: compartilhando uma aba, só o áudio dela é capturado.
  */
 export type ModoAudio = {
@@ -201,7 +201,7 @@ export const MODOS_AUDIO: ModoAudio[] = [
     id: 'tudo',
     label: 'Som do sistema',
     resumo:
-      'Tudo que sai do computador vai junto — inclusive chamadas de voz de outros aplicativos.',
+      'Tudo que sai do computador vai junto - inclusive chamadas de voz de outros aplicativos.',
     constraints: { audio: true, systemAudio: 'include' },
   },
   {

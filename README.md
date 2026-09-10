@@ -26,7 +26,7 @@ uma página que deixa a pessoa escolher entre **baixar o aplicativo** ou
 **entrar direto pelo navegador**. Nenhum dos dois caminhos pede conta.
 
 Não há backend. O WebRTC roda no navegador e o servidor de sinalização é o de
-quem hospeda a sala — o site é HTML estático do começo ao fim.
+quem hospeda a sala - o site é HTML estático do começo ao fim.
 
 ## Rodando
 
@@ -37,7 +37,7 @@ npm run build      # gera out/ pronto pra publicar
 npm run typecheck  # tsc --noEmit
 ```
 
-O build sai em `out/` como HTML estático — publica em Vercel, Netlify,
+O build sai em `out/` como HTML estático - publica em Vercel, Netlify,
 Cloudflare Pages, GitHub Pages ou qualquer host de arquivos.
 
 ---
@@ -69,14 +69,14 @@ Duas restrições do navegador se somam aqui:
 
 Publicado em HTTPS, o site só conecta em servidores `wss://`. Endereços
 digitados sem esquema já viram `wss://` automaticamente, e um `ws://` colado à
-mão gera um aviso antes da tentativa — em vez do erro cru do navegador, que não
+mão gera um aviso antes da tentativa - em vez do erro cru do navegador, que não
 explica nada.
 
 ### Áudio ao transmitir
 
 Não existe API web para tirar o som de um aplicativo específico da captura. O
 navegador não expõe áudio por processo, e fazer isso no sistema operacional
-exige API nativa — é por isso que o aplicativo de Windows usa WASAPI, e por isso
+exige API nativa - é por isso que o aplicativo de Windows usa WASAPI, e por isso
 que o próprio Discord precisa de um aplicativo de computador para o mesmo.
 
 O que dá para escolher, e o site deixa explícito:
@@ -119,7 +119,7 @@ src/
 ```
 
 **O que fica salvo:** apelido, endereço do servidor, sala e os últimos
-servidores usados — tudo no `localStorage` do navegador. Nada sai do
+servidores usados - tudo no `localStorage` do navegador. Nada sai do
 dispositivo, porque não existe servidor nosso para receber.
 
 **Os links de download apontam para `releases/latest`**, e não para uma versão

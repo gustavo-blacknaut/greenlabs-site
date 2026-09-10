@@ -25,7 +25,7 @@ export type StreamNaTela = {
    *
    * Com o servidor retransmitindo, chega uma faixa de áudio mesmo quando
    * ninguém está com microfone aberto - o m-line de áudio existe desde a
-   * primeira oferta. Sem esta marca isso virava um quadro "Participante —
+   * primeira oferta. Sem esta marca isso virava um quadro "Participante -
    * áudio" ocupando uma vaga do palco, e quem parava de transmitir a tela via
    * o quadro fantasma continuar ali e concluía que não tinha parado.
    */
@@ -48,7 +48,7 @@ type MensagemSinalizacao = {
 
   // O servidor avisa na entrada que está retransmitindo o vídeo. Nesse modo
   // quem negocia mídia é ele, e abrir conexão com cada pessoa cria uma malha
-  // inútil em paralelo — com as duas negociações se atropelando.
+  // inútil em paralelo - com as duas negociações se atropelando.
   sfu?: boolean;
 };
 
@@ -181,7 +181,7 @@ export function useCall() {
           const dono = nomesRef.current.get(peerId)?.nome ?? 'Participante';
           setStreams((atual) => {
             const meta = metaRef.current.get(id);
-            const nome = meta?.name ?? `${dono} — ${temVideo ? 'tela' : 'áudio'}`;
+            const nome = meta?.name ?? `${dono} - ${temVideo ? 'tela' : 'áudio'}`;
             const existente = atual.find((s) => s.id === id);
             if (existente) {
               // O card já existe: o rótulo e a presença de vídeo podem mudar,
@@ -400,7 +400,7 @@ export function useCall() {
 
   /**
    * Tenta reconectar com espera crescente (1s, 2s, 4s… até 15s). Enquanto
-   * tenta, a pessoa continua na tela da chamada com um aviso — só volta para
+   * tenta, a pessoa continua na tela da chamada com um aviso - só volta para
    * o formulário quando não há mais o que tentar.
    */
   const agendarReconexao = useCallback(() => {

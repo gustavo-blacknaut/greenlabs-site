@@ -15,7 +15,7 @@ import {
 } from '@/lib/links';
 
 export const metadata: Metadata = {
-  title: 'Downloads — GreenLabs',
+  title: 'Downloads - GreenLabs',
   description:
     'Baixe o GreenLabs para Windows, Linux ou Android. De graça, sem conta e sem limite de tempo.',
 };
@@ -33,7 +33,7 @@ const CLIENTES: Baixavel[] = [
     plataforma: 'Windows',
     titulo: 'GreenLabs',
     resumo:
-      'Pra jogar e mostrar a tela sem perder FPS. Roda leve, e seus amigos ouvem o jogo — mas não a conversa do Discord.',
+      'Pra jogar e mostrar a tela sem perder FPS. Roda leve, e seus amigos ouvem o jogo - mas não a conversa do Discord.',
     detalhes: [
       'Não pesa no jogo',
       'Manda o som do jogo, sem o Discord junto',
@@ -71,7 +71,7 @@ const CLIENTES: Baixavel[] = [
     plataforma: 'Android',
     titulo: 'GreenLabs no celular',
     resumo:
-      'Assiste, entra com câmera e mostra a tela do celular — coisa que nenhum navegador de celular faz.',
+      'Assiste, entra com câmera e mostra a tela do celular - coisa que nenhum navegador de celular faz.',
     detalhes: ['Mostra a tela do celular', 'Assiste de qualquer lugar', 'Android 8 ou mais novo'],
     href: RELEASE_ANDROID,
     repo: REPO_MOBILE,
@@ -142,7 +142,7 @@ export default function Downloads() {
             id="servidor"
             className="text-[11px] font-black uppercase tracking-[0.2em] text-zinc-600 mb-5"
           >
-            Avançado — só se você quiser
+            Avançado - só se você quiser
           </h2>
           <CartaoDeDownload item={SERVIDOR} />
         </section>
@@ -158,7 +158,7 @@ export default function Downloads() {
               </div>
               <p className="text-sm text-zinc-400 leading-relaxed font-medium">
                 No computador dá pra mostrar a tela, ligar a câmera e o microfone
-                direto do navegador. No celular você assiste e entra com câmera —
+                direto do navegador. No celular você assiste e entra com câmera -
                 pra mostrar a tela do celular só com o aplicativo.
               </p>
             </div>

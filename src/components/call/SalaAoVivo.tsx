@@ -158,7 +158,7 @@ export default function SalaAoVivo({
 
   // Só quem tem imagem ocupa o palco. O servidor retransmissor entrega uma
   // faixa de áudio mesmo sem ninguém falando, e ela virava um quadro
-  // "Participante — áudio" tomando uma vaga - inclusive depois de parar a tela,
+  // "Participante - áudio" tomando uma vaga - inclusive depois de parar a tela,
   // o que fazia parecer que não tinha parado. O áudio continua tocando, num
   // player fora da tela.
   const comImagem = streams.filter((s) => s.temVideo);
@@ -296,7 +296,7 @@ export default function SalaAoVivo({
           </span>
         ) : (
           <span className="hidden sm:block px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.03] text-green-400 text-xs font-black shrink-0">
-            {pingMs > 0 ? `${pingMs}ms` : '—'}
+            {pingMs > 0 ? `${pingMs}ms` : '-'}
           </span>
         )}
 
@@ -384,7 +384,7 @@ export default function SalaAoVivo({
           <p className="text-amber-300 text-sm leading-relaxed">
             <strong className="font-bold">Neste endereço você só assiste.</strong>{' '}
             O navegador só libera captura de tela e câmera em páginas HTTPS. Para
-            transmitir, abra a versão HTTPS deste site — ou use o aplicativo de
+            transmitir, abra a versão HTTPS deste site - ou use o aplicativo de
             desktop, que não tem essa limitação e ainda abre um túnel com
             certificado para o seu servidor.
           </p>
@@ -478,7 +478,7 @@ export default function SalaAoVivo({
 
         {escondidas > 0 && (
           <p className="mt-3 text-center text-xs text-zinc-600 font-medium">
-            {escondidas} fora do palco — aumente a divisão, ou clique numa tela para trazê-la à frente.
+            {escondidas} fora do palco - aumente a divisão, ou clique numa tela para trazê-la à frente.
           </p>
         )}
       </main>

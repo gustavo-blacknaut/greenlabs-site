@@ -9,7 +9,7 @@ const DESCRICAO =
 
 export const metadata: Metadata = {
   title: {
-    default: 'GreenLabs — sua tela ao vivo, sem conta',
+    default: 'GreenLabs - sua tela ao vivo, sem conta',
     template: '%s · GreenLabs',
   },
   description: DESCRICAO,
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     locale: 'pt_BR',
     url: SITE,
     siteName: 'GreenLabs',
-    title: 'GreenLabs — sua tela ao vivo, sem conta',
+    title: 'GreenLabs - sua tela ao vivo, sem conta',
     description: DESCRICAO,
     images: [{ url: '/images/logo-512.png', width: 512, height: 512, alt: 'GreenLabs' }],
   },

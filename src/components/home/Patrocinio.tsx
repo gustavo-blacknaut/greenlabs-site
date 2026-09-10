@@ -20,7 +20,7 @@ export default function Patrocinio() {
   // O onError sozinho não basta: a imagem vem no HTML do servidor e o
   // navegador já tentou carregá-la antes do React hidratar. Quando o arquivo
   // não existe, o evento de erro acontece nesse intervalo e ninguém está
-  // ouvindo — o handler é atado depois, para uma falha que já passou. Aqui a
+  // ouvindo - o handler é atado depois, para uma falha que já passou. Aqui a
   // checagem é do estado final, que não depende de ter visto o evento:
   // terminou de carregar e não tem largura nenhuma quer dizer que falhou.
   useEffect(() => {
@@ -85,7 +85,7 @@ export default function Patrocinio() {
               </h2>
 
               <p className="mt-5 text-sm lg:text-base text-zinc-500 leading-relaxed font-medium text-pretty max-w-2xl">
-                O GreenLabs foi feito para rodar no servidor de quem usa — é o
+                O GreenLabs foi feito para rodar no servidor de quem usa - é o
                 ponto do projeto. Mas ninguém aluga uma máquina só para
                 experimentar, e por isso existe um servidor público na tela de
                 entrar, aberto e sem cadastro. Ele é da Hostmine, que banca a

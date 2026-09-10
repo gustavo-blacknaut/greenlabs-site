@@ -13,7 +13,7 @@ import { lembrarServidor, salvarPreferencias } from '@/lib/storage';
 
 // `getDisplayMedia` só existe no navegador, então o HTML estático sai com
 // `false` e o valor certo aparece na hidratação. Isso era um useEffect que
-// chamava setState — funcionava, mas é uma renderização em cascata à toa, e
+// chamava setState - funcionava, mas é uma renderização em cascata à toa, e
 // useSyncExternalStore existe exatamente para "valor de fora do React com uma
 // resposta diferente no servidor". O `subscribe` não faz nada de propósito: o
 // que o navegador suporta não muda durante a visita.
@@ -51,7 +51,7 @@ export default function CallPage() {
       const stream = await navigator.mediaDevices.getDisplayMedia(
         montarConstraintsDeTela(q, modoAudio)
       );
-      await call.publicarStream('screen', `Tela — ${nome || 'você'}`, stream, q);
+      await call.publicarStream('screen', `Tela - ${nome || 'você'}`, stream, q);
       setAviso('');
     } catch (err) {
       // Cancelar na caixa do navegador não é erro; não vale mostrar aviso.
@@ -67,7 +67,7 @@ export default function CallPage() {
         video: { width: { ideal: 1280 }, height: { ideal: 720 } },
         audio: true,
       });
-      await call.publicarStream('camera', `Câmera — ${nome || 'você'}`, stream, pegarQualidade('720p30'));
+      await call.publicarStream('camera', `Câmera - ${nome || 'você'}`, stream, pegarQualidade('720p30'));
       setAviso('');
     } catch (err) {
       if ((err as DOMException)?.name !== 'NotAllowedError') {

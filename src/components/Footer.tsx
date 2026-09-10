@@ -62,7 +62,7 @@ export default function Footer() {
       <div className="border-t border-white/5">
         <div className="mx-auto w-full max-w-7xl 2xl:max-w-[88rem] px-4 sm:px-6 lg:px-10 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-zinc-600 font-medium">
-            GreenLabs — um projeto{' '}
+            GreenLabs - um projeto{' '}
             <a
               href="https://greencodes.com.br"
               target="_blank"

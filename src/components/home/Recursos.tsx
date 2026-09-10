@@ -80,13 +80,13 @@ export default function Recursos() {
                 Áudio sem o Discord junto
               </h3>
               <p className="text-zinc-400 max-w-lg font-medium text-base lg:text-lg leading-relaxed text-pretty">
-                O app captura o som do sistema tirando o Discord da transmissão —
+                O app captura o som do sistema tirando o Discord da transmissão -
                 sem mutar nada. Você continua ouvindo seus amigos normalmente,
                 só quem assiste é que não escuta a conversa.
               </p>
             </div>
             <p className="mt-8 text-xs text-zinc-600 font-medium relative z-10">
-              Usa WASAPI process loopback. Pelo navegador isso não existe — dá
+              Usa WASAPI process loopback. Pelo navegador isso não existe - dá
               pra escolher a fonte do áudio, mas não separar um aplicativo.
             </p>
             <div

@@ -3,7 +3,7 @@
 Duas partes: o que o navegador precisa receber (cabeçalhos) e o que a
 máquina precisa ter fechado (firewall, SSH, nginx).
 
-Tudo abaixo foi testado contra o site de verdade — a CSP em especial,
+Tudo abaixo foi testado contra o site de verdade - a CSP em especial,
 porque uma CSP errada não dá erro de build: ela apaga uma função em
 silêncio, e a que morre primeiro aqui é justamente compartilhar tela.
 
@@ -12,7 +12,7 @@ silêncio, e a que morre primeiro aqui é justamente compartilhar tela.
 ## 1. Por que os cabeçalhos vão no nginx, e não no next.config
 
 O site é `output: 'export'`. Não existe servidor Next em produção, e a
-opção `headers()` do `next.config.ts` **não faz nada** nesse modo — ela
+opção `headers()` do `next.config.ts` **não faz nada** nesse modo - ela
 depende de um servidor Next atendendo a requisição. Quem responde é o
 nginx, então é lá que os cabeçalhos existem.
 
@@ -107,7 +107,7 @@ ssl_session_tickets off;
 
 ## 4. Firewall
 
-O padrão é fechar tudo e abrir o necessário — não o contrário.
+O padrão é fechar tudo e abrir o necessário - não o contrário.
 
 ```bash
 sudo ufw default deny incoming
@@ -172,7 +172,7 @@ sudo fail2ban-client status sshd
 ## 7. Limite de requisições no nginx
 
 O site é estático e leve, mas o proxy na frente do `serve` merece um teto
-— é um processo Node só.
+- é um processo Node só.
 
 Em `/etc/nginx/nginx.conf`, dentro de `http { }`:
 
@@ -200,13 +200,13 @@ sudo dpkg-reconfigure -plow unattended-upgrades
 
 ## 9. O servidor de sinalização
 
-O site é estático e não guarda nada de ninguém — não há banco, não há
+O site é estático e não guarda nada de ninguém - não há banco, não há
 sessão, não há cookie. A superfície de verdade é o servidor Go.
 
 - Ele **não tem autenticação**: quem souber o endereço e o nome da sala
   entra. Salas com nome adivinhável (`call1`, `teste`) são públicas na
   prática. Use nomes longos para conversa que importa.
-- Se for expô-lo em `wss://` pelo nginx, aplique ali o mesmo `limit_req` —
+- Se for expô-lo em `wss://` pelo nginx, aplique ali o mesmo `limit_req` -
   uma sinalização aberta é uma fila de conexões WebSocket aberta.
 - Vídeo e áudio **não passam pelo nginx nem pelo servidor Go em modo
   P2P**: vão diretos entre os participantes. Nesse modo o IP de cada um
