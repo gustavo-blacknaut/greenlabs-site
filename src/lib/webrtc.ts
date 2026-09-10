@@ -133,8 +133,23 @@ export async function ajustarSender(
   if (!sender || sender.track?.kind !== 'video') return;
   try {
     const params = sender.getParameters();
-    params.degradationPreference =
-      qualidade.fps >= 45 ? 'maintain-framerate' : 'maintain-resolution';
+    // "balanced", e nao "maintain-resolution".
+    //
+    // maintain-resolution manda o navegador NUNCA encolher a imagem: quando o
+    // encoder nao da conta, ele derruba quadro. Parece a escolha certa para
+    // tela (texto fica legivel), e e a escolha errada quando o encoder esta em
+    // software - que e o caso de quase todo mundo transmitindo pelo navegador.
+    //
+    // Medido: 1080p custa 101 ms por quadro para codificar aqui, e 720p custa
+    // 40 ms. A 101 ms o teto e ~10 quadros por segundo, e com
+    // maintain-resolution o resultado entregue foi 1920x1080 a 6 fps - uma
+    // sequencia de fotos. Quem assiste chama isso de travando, e nao ha perda
+    // de pacote nenhuma no caminho: a imagem simplesmente nao e produzida.
+    //
+    // Com balanced o navegador encolhe a resolucao quando precisa e mantem o
+    // movimento. Uma tela um pouco menor e fluida se le melhor do que uma tela
+    // cheia que anda de dois em dois segundos.
+    params.degradationPreference = 'balanced';
     if (!params.encodings?.length) params.encodings = [{}];
     params.encodings[0].maxBitrate = qualidade.bitrate;
     params.encodings[0].maxFramerate = qualidade.fps;
