@@ -14,6 +14,7 @@ import {
 
 export type StreamNaTela = {
   id: string;
+  streamId: string;
   stream: MediaStream;
   nome: string;
   local: boolean;
@@ -67,6 +68,8 @@ export function useCall() {
 
   const wsRef = useRef<WebSocket | null>(null);
   const peersRef = useRef(new Map<string, RTCPeerConnection>());
+  const meuIdRef = useRef<string | null>(null);
+  const candidatosPendentesRef = useRef(new Map<string, RTCIceCandidateInit[]>());
 
   // O servidor esta retransmitindo? Nesse modo quem negocia e ele.
   const modoSfuRef = useRef(false);
@@ -131,6 +134,26 @@ export function useCall() {
     async () => {}
   );
 
+  const vagaParaEnviar = (pc: RTCPeerConnection, tipo: string) =>
+    pc
+      .getTransceivers()
+      .find(
+        (t) =>
+          !t.sender.track &&
+          (t.direction === 'sendrecv' || t.direction === 'sendonly') &&
+          t.receiver.track?.kind === tipo
+      );
+
+  const aplicarCandidatosPendentes = useCallback(async (peerId: string, pc: RTCPeerConnection) => {
+    if (!pc.remoteDescription) return;
+    const fila = candidatosPendentesRef.current.get(peerId);
+    if (!fila?.length) return;
+    candidatosPendentesRef.current.delete(peerId);
+    for (const candidato of fila) {
+      try { await pc.addIceCandidate(candidato); } catch {}
+    }
+  }, []);
+
   const criarPeer = useCallback(
     (peerId: string): RTCPeerConnection => {
       const existente = peersRef.current.get(peerId);
@@ -141,28 +164,24 @@ export function useCall() {
 
       let temVideoLocal = false;
       let temAudioLocal = false;
-      for (const item of streamsLocaisRef.current) {
-        for (const track of item.stream.getTracks()) {
-          const sender = pc.addTrack(track, item.stream);
-          if (track.kind === 'video') {
-            temVideoLocal = true;
-            if (item.quality) void ajustarSender(sender, item.quality);
-          } else {
-            temAudioLocal = true;
+      if (!modoSfuRef.current) {
+        for (const item of streamsLocaisRef.current) {
+          for (const track of item.stream.getTracks()) {
+            const sender = pc.addTrack(track, item.stream);
+            if (track.kind === 'video') {
+              temVideoLocal = true;
+              if (item.quality) void ajustarSender(sender, item.quality);
+            } else {
+              temAudioLocal = true;
+            }
           }
         }
-      }
 
-      // Sem mídia local, a oferta sairia sem nenhuma m-line - e uma resposta
-      // não pode criar m-line. Quem já estava transmitindo recebia essa oferta
-      // vazia e não tinha onde encaixar a faixa: o vídeo simplesmente nunca
-      // saía, e quem entrou via "Ninguém transmitindo ainda" com alguém
-      // transmitindo do outro lado.
-      //
-      // Reservar as m-lines de recepção resolve nos dois sentidos e vale para
-      // quem entra depois de a transmissão já ter começado, que é o caso comum.
-      if (!temVideoLocal) pc.addTransceiver('video', { direction: 'recvonly' });
-      if (!temAudioLocal) pc.addTransceiver('audio', { direction: 'recvonly' });
+        // Sem mídia local, a oferta sairia sem nenhuma m-line - e uma resposta
+        // não pode criar m-line. Em SFU as m-lines sao abertas pelo servidor.
+        if (!temVideoLocal) pc.addTransceiver('video', { direction: 'recvonly' });
+        if (!temAudioLocal) pc.addTransceiver('audio', { direction: 'recvonly' });
+      }
 
       pc.onicecandidate = (ev) => {
         if (ev.candidate) enviar({ type: 'ice', to: peerId, candidate: ev.candidate });
@@ -174,13 +193,16 @@ export function useCall() {
         // chegava e nenhum card aparecia, dando a impressão de que ninguém
         // estava transmitindo. Sem stream, monta-se uma a partir da faixa.
         const stream = ev.streams[0] ?? new MediaStream([ev.track]);
-        const id = `${peerId}:${stream.id}`;
+        const streamId = ev.streams[0]?.id ?? ev.track.id;
+        const id = `${peerId}:${streamId}`;
 
         const atualizar = () => {
           const temVideo = stream.getVideoTracks().length > 0;
           const dono = nomesRef.current.get(peerId)?.nome ?? 'Participante';
           setStreams((atual) => {
-            const meta = metaRef.current.get(id);
+            const meta =
+              metaRef.current.get(id) ??
+              [...metaRef.current.entries()].find(([chave]) => chave.endsWith(`:${streamId}`))?.[1];
             const nome = meta?.name ?? `${dono} - ${temVideo ? 'tela' : 'áudio'}`;
             const existente = atual.find((s) => s.id === id);
             if (existente) {
@@ -189,7 +211,7 @@ export function useCall() {
               if (existente.nome === nome && existente.temVideo === temVideo) return atual;
               return atual.map((s) => (s.id === id ? { ...s, nome, temVideo } : s));
             }
-            return [...atual, { id, stream, local: false, peerId, nome, temVideo }];
+            return [...atual, { id, streamId, stream, local: false, peerId, nome, temVideo }];
           });
         };
 
@@ -204,6 +226,15 @@ export function useCall() {
             atualizar();
           }
         });
+        ev.track.addEventListener(
+          'ended',
+          () => {
+            if (stream.getTracks().every((track) => track.readyState === 'ended')) {
+              setStreams((atual) => atual.filter((s) => s.id !== id));
+            }
+          },
+          { once: true }
+        );
       };
 
       pc.onconnectionstatechange = () => {
@@ -237,6 +268,7 @@ export function useCall() {
     (peerId: string) => {
       peersRef.current.get(peerId)?.close();
       peersRef.current.delete(peerId);
+      candidatosPendentesRef.current.delete(peerId);
       nomesRef.current.delete(peerId);
       setStreams((atual) => atual.filter((s) => s.peerId !== peerId));
       sincronizarParticipantes();
@@ -258,6 +290,17 @@ export function useCall() {
       avisarTodos({ type: 'stream-ended', id: item.id, streamId: item.stream.id });
 
       for (const [peerId, pc] of peersRef.current.entries()) {
+        if (modoSfuRef.current) {
+          for (const transceptor of pc.getTransceivers()) {
+            if (
+              transceptor.sender.track &&
+              item.stream.getTracks().includes(transceptor.sender.track)
+            ) {
+              try { await transceptor.sender.replaceTrack(null); } catch {}
+            }
+          }
+          continue;
+        }
         for (const sender of pc.getSenders()) {
           if (sender.track && item.stream.getTracks().includes(sender.track)) {
             try { pc.removeTrack(sender); } catch {}
@@ -278,6 +321,7 @@ export function useCall() {
     ): Promise<StreamNaTela> => {
       const item: StreamNaTela = {
         id: gerarId(),
+        streamId: stream.id,
         kind,
         nome,
         stream,
@@ -301,6 +345,15 @@ export function useCall() {
       });
 
       for (const [peerId, pc] of peersRef.current.entries()) {
+        if (modoSfuRef.current) {
+          for (const track of stream.getTracks()) {
+            const vaga = vagaParaEnviar(pc, track.kind);
+            if (!vaga) continue;
+            await vaga.sender.replaceTrack(track);
+            if (track.kind === 'video') void ajustarSender(vaga.sender, quality);
+          }
+          continue;
+        }
         for (const track of stream.getTracks()) {
           const sender = pc.addTrack(track, stream);
           if (track.kind === 'video') void ajustarSender(sender, quality);
@@ -316,6 +369,7 @@ export function useCall() {
     async (msg: MensagemSinalizacao) => {
       switch (msg.type) {
         case 'joined': {
+          meuIdRef.current = msg.peerId ?? null;
           modoSfuRef.current = msg.sfu === true;
 
           for (const peer of msg.peers ?? []) {
@@ -357,21 +411,63 @@ export function useCall() {
         }
         case 'stream-meta': {
           if (msg.from && msg.streamId) {
-            metaRef.current.set(`${msg.from}:${msg.streamId}`, {
+            const meta = {
               name: msg.name ?? '',
               kind: msg.kind,
-            });
+            };
+            metaRef.current.set(`${msg.from}:${msg.streamId}`, meta);
+            setStreams((atual) =>
+              atual.map((item) =>
+                item.streamId === msg.streamId
+                  ? { ...item, nome: meta.name || item.nome, kind: msg.kind }
+                  : item
+              )
+            );
           }
           return;
         }
         case 'stream-ended': {
-          setStreams((atual) => atual.filter((s) => s.id !== `${msg.from}:${msg.streamId}`));
+          setStreams((atual) =>
+            atual.filter(
+              (s) => s.id !== `${msg.from}:${msg.streamId}` && s.streamId !== msg.streamId
+            )
+          );
           return;
         }
         case 'offer': {
           if (!msg.from || !msg.sdp) return;
           const pc = peersRef.current.get(msg.from) ?? criarPeer(msg.from);
+
+          const educado = meuIdRef.current ? msg.from < meuIdRef.current : true;
+          if (pc.signalingState !== 'stable' && !educado) return;
+          if (pc.signalingState !== 'stable') {
+            try { await pc.setLocalDescription({ type: 'rollback' }); } catch {}
+          }
           await pc.setRemoteDescription(new RTCSessionDescription(msg.sdp));
+          await aplicarCandidatosPendentes(msg.from, pc);
+
+          if (modoSfuRef.current) {
+            const marcados = new Set<string>();
+            for (const transceptor of pc.getTransceivers()) {
+              const tipo = transceptor.receiver.track?.kind;
+              if (!tipo || marcados.has(tipo)) continue;
+              marcados.add(tipo);
+              try { transceptor.direction = 'sendrecv'; } catch {}
+            }
+
+            // Se a captura ja estava ativa antes de conectar/reconectar, ela
+            // precisa ocupar as vagas abertas pelo servidor nesta nova sessao.
+            for (const item of streamsLocaisRef.current) {
+              for (const track of item.stream.getTracks()) {
+                const vaga = vagaParaEnviar(pc, track.kind);
+                if (!vaga) continue;
+                await vaga.sender.replaceTrack(track);
+                if (track.kind === 'video' && item.quality) {
+                  void ajustarSender(vaga.sender, item.quality);
+                }
+              }
+            }
+          }
 
           const answer = await pc.createAnswer();
           await pc.setLocalDescription(answer);
@@ -381,19 +477,33 @@ export function useCall() {
         case 'answer': {
           if (!msg.from || !msg.sdp) return;
           const pc = peersRef.current.get(msg.from);
-          if (pc) await pc.setRemoteDescription(new RTCSessionDescription(msg.sdp));
+          if (pc) {
+            await pc.setRemoteDescription(new RTCSessionDescription(msg.sdp));
+            await aplicarCandidatosPendentes(msg.from, pc);
+          }
           return;
         }
         case 'ice': {
           if (!msg.from || !msg.candidate) return;
-          const pc = peersRef.current.get(msg.from);
-          if (pc) {
-            try { await pc.addIceCandidate(new RTCIceCandidate(msg.candidate)); } catch {}
+          const pc = peersRef.current.get(msg.from) ?? criarPeer(msg.from);
+          if (!pc.remoteDescription) {
+            const fila = candidatosPendentesRef.current.get(msg.from) ?? [];
+            fila.push(msg.candidate);
+            candidatosPendentesRef.current.set(msg.from, fila);
+            return;
           }
+          try { await pc.addIceCandidate(new RTCIceCandidate(msg.candidate)); } catch {}
         }
       }
     },
-    [criarPeer, enviar, fazerOferta, removerPeer, sincronizarParticipantes]
+    [
+      aplicarCandidatosPendentes,
+      criarPeer,
+      enviar,
+      fazerOferta,
+      removerPeer,
+      sincronizarParticipantes,
+    ]
   );
 
   const MAX_TENTATIVAS = 6;
@@ -544,6 +654,8 @@ export function useCall() {
           // renegociar, e reentrar na sala refaz tudo do zero.
           for (const pc of peersRef.current.values()) pc.close();
           peersRef.current.clear();
+          candidatosPendentesRef.current.clear();
+          meuIdRef.current = null;
           nomesRef.current.clear();
           metaRef.current.clear();
           setParticipantes([]);
