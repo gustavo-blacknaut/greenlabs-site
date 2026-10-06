@@ -369,6 +369,7 @@ export function useCall() {
     async (msg: MensagemSinalizacao) => {
       switch (msg.type) {
         case 'joined': {
+          tentativasRef.current = 0;
           meuIdRef.current = msg.peerId ?? null;
           modoSfuRef.current = msg.sfu === true;
 
@@ -398,11 +399,15 @@ export function useCall() {
           return;
         }
         case 'room-pings': {
+          let mudou = false;
           for (const [peerId, ping] of Object.entries(msg.pings ?? {})) {
             const atual = nomesRef.current.get(peerId);
-            if (atual) atual.ping = ping;
+            if (atual && Number.isFinite(ping) && atual.ping !== ping) {
+              atual.ping = ping;
+              mudou = true;
+            }
           }
-          sincronizarParticipantes();
+          if (mudou) sincronizarParticipantes();
           return;
         }
         case 'pong': {
@@ -532,7 +537,7 @@ export function useCall() {
 
     tentativasRef.current += 1;
     setReconectando(true);
-    const espera = Math.min(1000 * 2 ** (tentativasRef.current - 1), 15000);
+    const espera = Math.min(1000 * 2 ** (tentativasRef.current - 1), 15000) * (0.8 + Math.random() * 0.4);
 
     if (reconexaoTimerRef.current) clearTimeout(reconexaoTimerRef.current);
     reconexaoTimerRef.current = setTimeout(() => {
@@ -604,12 +609,16 @@ export function useCall() {
 
         ws.onopen = () => {
           clearTimeout(limite);
+          if (wsRef.current !== ws) {
+            ws.close();
+            reject(new Error('Conexão substituída.'));
+            return;
+          }
           abriuAlgumaVez = true;
           setConectado(true);
           setConectando(false);
           setReconectando(false);
           setErro('');
-          tentativasRef.current = 0;
           enviar({ type: 'join', roomId: sala || 'call1', name: nome || 'Visitante' });
 
           pingTimerRef.current = setInterval(() => {
@@ -621,8 +630,11 @@ export function useCall() {
         };
 
         ws.onmessage = (ev) => {
+          if (wsRef.current !== ws) return;
           try {
-            void tratarMensagem(JSON.parse(ev.data as string) as MensagemSinalizacao);
+            void tratarMensagem(JSON.parse(ev.data as string) as MensagemSinalizacao).catch(() => {
+              if (wsRef.current === ws) ws.close();
+            });
           } catch {}
         };
 
@@ -639,6 +651,7 @@ export function useCall() {
 
         ws.onerror = () => {
           clearTimeout(limite);
+          if (wsRef.current !== ws) return;
           if (desligandoRef.current || ws.readyState === WebSocket.OPEN) return;
           if (tentarAlternativo()) return;
           setConectando(false);
@@ -647,6 +660,10 @@ export function useCall() {
 
         ws.onclose = () => {
           clearTimeout(limite);
+          if (wsRef.current !== ws) {
+            reject(new Error('Conexão substituída.'));
+            return;
+          }
           if (pingTimerRef.current) clearInterval(pingTimerRef.current);
           // Fechou sem nunca ter aberto: ainda vale tentar o outro esquema.
           if (!abriuAlgumaVez && !desligandoRef.current && tentarAlternativo()) return;

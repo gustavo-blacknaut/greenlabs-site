@@ -32,6 +32,9 @@ function Video({ stream, mudo }: { stream: MediaStream; mudo: boolean }) {
   useEffect(() => {
     const el = ref.current;
     if (el && el.srcObject !== stream) el.srcObject = stream;
+    return () => {
+      if (el) el.srcObject = null;
+    };
   }, [stream]);
   return (
     <video
