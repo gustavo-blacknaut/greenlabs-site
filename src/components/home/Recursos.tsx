@@ -13,7 +13,7 @@ const CARDS = [
     Icone: Zap,
     titulo: 'Direto entre vocês',
     texto:
-      'Vídeo e áudio vão peer-to-peer. O servidor só apresenta os participantes uns aos outros e sai da frente.',
+      'Em P2P, vídeo e áudio vão direto entre participantes. Em SFU, o servidor recebe e retransmite a mídia.',
   },
   {
     Icone: Users,
@@ -128,8 +128,8 @@ export default function Recursos() {
                   Servidor leve
                 </h3>
                 <p className="text-zinc-400 text-sm font-medium leading-relaxed">
-                  Medido: 56 MB de RAM com 30 pessoas. Roda numa VPS barata ou
-                  num painel de jogos.
+                  A sinalização pode rodar numa VPS ou num painel de jogos.
+                  Com SFU, dimensione CPU, memória e banda para a mídia das salas.
                 </p>
               </div>
             </a>

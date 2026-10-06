@@ -5,7 +5,7 @@ import JanelaDemo from './JanelaDemo';
 
 const NUMEROS = [
   { valor: '1080p60', rotulo: 'na transmissão' },
-  { valor: '56 MB', rotulo: 'de RAM no servidor' },
+  { valor: 'P2P / SFU', rotulo: 'modos de chamada' },
   { valor: '0', rotulo: 'cadastros' },
 ];
 
@@ -21,11 +21,7 @@ export default function Hero() {
       aria-labelledby="hero-titulo"
     >
       <div className="absolute inset-0 -z-10" aria-hidden="true">
-        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-green-500/10 rounded-full blur-[120px] animate-pulse" />
-        <div
-          className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-emerald-500/10 rounded-full blur-[100px] animate-pulse"
-          style={{ animationDelay: '1s' }}
-        />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_15%,rgba(34,197,94,0.10),transparent_50%),radial-gradient(ellipse_at_75%_65%,rgba(16,185,129,0.08),transparent_45%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px]" />
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-zinc-950" />
       </div>
@@ -48,10 +44,10 @@ export default function Hero() {
           </h1>
 
           <p className="max-w-xl mx-auto lg:mx-0 mt-6 mb-9 text-zinc-400 text-base sm:text-lg xl:text-xl leading-relaxed font-medium text-pretty">
-            Transmissão de tela e chamadas direto entre vocês, no seu próprio
-            servidor.{' '}
+            Transmissão de tela e chamadas no seu próprio servidor, em P2P ou
+            com retransmissão SFU.{' '}
             <span className="text-white font-semibold">
-              Ninguém no meio, nenhum cadastro, nada expirando em 40 minutos.
+              Sem cadastro e sem limite de tempo por chamada.
             </span>
           </p>
 

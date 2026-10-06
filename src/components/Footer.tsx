@@ -32,7 +32,7 @@ export default function Footer() {
           </Link>
           <p className="text-zinc-500 text-sm max-w-xs leading-relaxed font-medium">
             Transmissão de tela e chamadas no seu próprio servidor. Sem conta,
-            sem intermediário.
+            com P2P ou retransmissão SFU.
           </p>
         </div>
 
@@ -83,7 +83,7 @@ export default function Footer() {
               Hostmine
             </a>
             <span className="mx-2 text-zinc-800">·</span>
-            Vídeo e áudio nunca passam por um servidor nosso.
+            No modo SFU, a mídia passa pelo servidor da sala.
           </p>
         </div>
       </div>

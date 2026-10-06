@@ -118,7 +118,7 @@ export default function EntrarSala({
           Antes o erro explicava o problema e parava aí - e o problema é de uma
           regra do navegador, então quem lia não tinha o que fazer com a
           informação. Aqui vão as duas saídas reais, com o custo de cada uma
-          escrito: o túnel não tem intermediário, a ponte tem.
+          escrito: ambos dependem do provedor que encaminha a sinalizacao.
         */}
         {ofereceRota && (
           <div className="mb-5 px-4 py-3.5 rounded-xl border border-amber-500/30 bg-amber-500/[0.07]">
@@ -129,13 +129,14 @@ export default function EntrarSala({
               <strong className="text-zinc-200">Se o servidor é seu</strong>, suba
               com <code className="px-1 py-0.5 rounded bg-white/10 text-zinc-200">--tunnel</code>:
               ele entrega um endereço <code className="px-1 py-0.5 rounded bg-white/10 text-zinc-200">wss://</code>{' '}
-              pronto, sem intermediário e sem abrir porta no roteador.
+              pronto, com a sinalização encaminhada pelo provedor do túnel.
+              No modo SFU, a porta UDP de mídia também precisa estar acessível.
             </p>
             <p className="text-zinc-400 text-xs leading-relaxed mb-3">
               <strong className="text-zinc-200">Ou passe pela ponte</strong> -
               ela recebe <code className="px-1 py-0.5 rounded bg-white/10 text-zinc-200">wss://</code>{' '}
               e repassa para o seu servidor. Só a sinalização passa por lá; vídeo
-              e áudio continuam indo direto entre vocês.{' '}
+              e áudio seguem o modo da sala: direto em P2P ou pelo servidor SFU.{' '}
               <span className="text-amber-300/90">
                 Quem opera a ponte vê quem entrou em qual sala - não vê a imagem
                 nem o som.
